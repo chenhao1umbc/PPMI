@@ -1,0 +1,80 @@
+AI Models for Parkinson Classification using PPMI dataset
+
+                Model  Train Sensitivity  Train Specificity  Train ROC AUC  \
+0  Logistic Regression            0.90625               0.95       0.970693
+1        Random Forest            1.00000               1.00       1.000000
+
+   Train Accuracy  Test Sensitivity  Test Specificity  Test ROC AUC  \
+0        0.928125            0.8625            0.8875      0.948594
+1        1.000000            1.0000            0.9875      1.000000
+
+   Test Accuracy
+0        0.87500
+1        0.99375
+With MSEADL
+
+Metric
+Without MSEADLG
+With MSEADLG
+Δ (Change)
+Test Accuracy
+0.88125
+0.875
+–0.00625
+Test Sensitivity
+0.8875
+0.8625
+–0.025
+Test Specificity
+0.875
+0.8875
++0.0125
+Logistic Regression
+
+Metric
+Without MSEADLG
+With MSEADLG
+Δ (Change)
+Test Accuracy
+0.9875
+0.99375
++0.00625
+Test Sensitivity
+0.975
+1.000
++0.025
+Test Specificity
+1.000
+0.9875
+–0.0125
+Random Forest
+
+  Results:
+	1, urate is importance feature, but it only can useful in classifying SWEDD and PD.
+	2, MSEADL is important feature, but yet potentially misinterpreted feature with medium value with come edge cases.
+      3. List all the top 10 important features with feature/label drift detection solutions: upsit, mseadl, etc.
+      4, Visit-based model, the Visit 06, 08, 10 has almost 99% accuracy in 3-label prediction. Not a simple 2 label prediction.
+
+
+     V06:  training accuracy can go to 100%
+V06: Test Accuracy: 0.975
+
+V08: Test Accuracy: 0.9666666666666667
+
+V10： 0.9944
+
+
+Test Accuracy:
+V:04: 0.8458333333333333
+
+
+
+    accuracy                           0.98       960
+   macro avg       0.98      0.98      0.98       960
+weighted avg       0.98      0.98      0.98       960
+Confusion Matrix (Train):
+...
+[ 5 58 17]
+ [ 7  7 66]]
+Test Accuracy: 0.7875 = 80%
+  Baseline records

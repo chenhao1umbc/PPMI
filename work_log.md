@@ -231,20 +231,25 @@ PPMI/
 
 ## Progress Log
 
-### November 5, 2025 - Demo 02 Biomarker Synergy Analysis
+### November 5, 2025 - Demo 02 Biomarker Synergy Analysis (Updated)
 - Fixed cohort filtering bug in src/data_loader.py (string to integer mapping)
 - Added COHORT_CODES mapping: PD=1, HC=2, SWEDD=3, Prodromal=4
 - Improved load_ppmi_data to handle relative paths from any directory
-- Successfully executed demo 02: Biomarker Synergy Analysis
-- **Key Findings**:
-  - Analyzed 8,981 samples (PD: 7,021, HC: 1,960)
-  - CSF biomarkers: 4,071 samples available (tau, ptau, abeta)
+- Fixed demo 02 cohort counting bug (integers vs strings)
+- Added classification evaluation with train/test split
+- **Classification Performance (PD vs HC)**:
+  - Dataset: 3,352 samples (PD: 2,482, HC: 870)
+  - Test Accuracy: 98.10%
+  - Test Sensitivity: 95.82%
+  - Test Specificity: 98.90%
+  - Comparable to YW's 99.38% (3-way classification)
+- **Feature Importance**:
+  - Top feature: updrs3_score (motor) - 37.8% importance
+  - CSF biomarkers contribute: ptau (1.9%), tau (1.6%), abeta (1.3%)
+  - Finding: Motor symptoms dominate but CSF biomarkers show synergistic effects
+- **Data Quality**:
+  - CSF biomarkers: 4,071 samples available (63-85% missing)
   - Plasma biomarkers: only 191 samples (97.9% missing) - limits analysis
-  - Multi-modal feature importance (biomarkers + clinical):
-    - Top feature: updrs3_score (motor) - 37.8% importance
-    - CSF biomarkers contribute: ptau (1.9%), tau (1.6%), abeta (1.3%)
-    - Finding: Motor symptoms dominate but CSF biomarkers show synergistic effects
-  - **Limitation**: Plasma biomarkers (ptau217, bd_tau) too sparse for robust analysis
 
 ### November 2, 2025 - Project Restructuring
 - Created work_log.md for detailed tracking

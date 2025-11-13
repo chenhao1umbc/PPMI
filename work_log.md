@@ -231,25 +231,57 @@ PPMI/
 
 ## Progress Log
 
-### November 5, 2025 - Demo 02 Biomarker Synergy Analysis (Updated)
-- Fixed cohort filtering bug in src/data_loader.py (string to integer mapping)
-- Added COHORT_CODES mapping: PD=1, HC=2, SWEDD=3, Prodromal=4
-- Improved load_ppmi_data to handle relative paths from any directory
-- Fixed demo 02 cohort counting bug (integers vs strings)
-- Added classification evaluation with train/test split
-- **Classification Performance (PD vs HC)**:
-  - Dataset: 3,352 samples (PD: 2,482, HC: 870)
-  - Test Accuracy: 98.10%
-  - Test Sensitivity: 95.82%
-  - Test Specificity: 98.90%
-  - Comparable to YW's 99.38% (3-way classification)
-- **Feature Importance**:
-  - Top feature: updrs3_score (motor) - 37.8% importance
-  - CSF biomarkers contribute: ptau (1.9%), tau (1.6%), abeta (1.3%)
-  - Finding: Motor symptoms dominate but CSF biomarkers show synergistic effects
-- **Data Quality**:
-  - CSF biomarkers: 4,071 samples available (63-85% missing)
-  - Plasma biomarkers: only 191 samples (97.9% missing) - limits analysis
+### November 11, 2025 - Demo 03 Feature Engineering Comparison
+- **Multi-modal feature combination analysis with systematic feature engineering**
+- Created src/feature_engineering.py with modular functions
+- Tested 7 feature combinations: Biomarkers, Clinical, Progression, and all combinations
+- **Feature Engineering Pipeline**:
+  - Normalize all features with StandardScaler
+  - Check skewness individually (threshold: 0.75)
+  - Apply transformations (log/sqrt/boxcox/reciprocal) for skewed features
+  - Add aggregate features (mean, max, min, std, range)
+- **Dataset**: 8,896 samples, 3-class classification (PD vs SWEDD vs HC)
+- **Validation**: 5-fold stratified cross-validation
+- **Best Results by Combination**:
+  - Biomarkers only: 77.57% (Random Forest, 14 → 31 features)
+  - Clinical only: 97.45% (Gradient Boosting, 16 → 34 features)
+  - Progression only: 76.38% (Logistic Regression, 7 → 19 features)
+  - Bio+Clinical: 98.15% (LightGBM, 30 → 60 features)
+  - Bio+Progression: 77.83% (LightGBM, 21 → 45 features)
+  - Clinical+Progression: 97.47% (Gradient Boosting, 23 → 48 features)
+  - All features: 98.16% (XGBoost, 37 → 74 features)
+- **Key Findings**:
+  - Clinical features are most discriminative (97.45% alone)
+  - Biomarkers alone are insufficient (77.57%)
+  - Combining biomarkers with clinical slightly improves performance
+  - Feature engineering doubled feature count via skewness-based transformations
+  - Gradient boosting methods consistently outperform traditional models
+- **Model Rankings (averaged across all combinations)**:
+  - LightGBM: 88.96%
+  - Gradient Boosting: 88.95%
+  - XGBoost: 88.87%
+  - Random Forest: 88.75%
+  - Logistic Regression: 88.19%
+
+### November 11, 2025 - Demo 02 YW Reproduction with Model Comparison (Final)
+- **Complete rewrite of demo 02 to reproduce and extend YW's work**
+- Added dependencies: xgboost, lightgbm, libomp
+- Created src/model_comparison.py with modular functions
+- Fixed cohort filtering bug and NaN handling issues
+- **Classification Task**: 3-class (PD vs SWEDD vs HC) - same as YW
+- **Dataset**: 8,863 samples using all 166 numeric features
+- **Validation**: 5-fold stratified cross-validation (more robust than YW's single split)
+- **Model Comparison Results**:
+  - Logistic Regression: 98.75% (+/- 0.32%)
+  - Random Forest: 99.04% (+/- 0.12%)
+  - Gradient Boosting: 99.50% (+/- 0.09%)
+  - **XGBoost: 99.65% (+/- 0.15%)** - EXCEEDS YW's 99.38%
+  - **LightGBM: 99.64% (+/- 0.16%)** - EXCEEDS YW's 99.38%
+- **Key Findings**:
+  - Successfully reproduced YW's results (RF: 99.04% vs YW's 99.38%)
+  - Modern gradient boosting methods (XGBoost, LightGBM) achieve superior performance
+  - 5-fold CV provides more reliable estimates than single train-test split
+  - Results validated across all 5 folds with low variance
 
 ### November 2, 2025 - Project Restructuring
 - Created work_log.md for detailed tracking

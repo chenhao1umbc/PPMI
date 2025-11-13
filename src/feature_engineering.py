@@ -27,12 +27,12 @@ def apply_transformation(series, transformation='log'):
 
     Args:
         series: pandas Series
-        transformation: Type of transformation ('log', 'sqrt', 'boxcox', 'reciprocal')
+        transformation: Type of transformation ('log', 'sqrt', 'square', 'boxcox')
 
     Returns:
         pandas Series: Transformed series
     """
-    # Handle negative values by shifting
+    # Handle negative values by shifting for log/sqrt
     min_val = series.min()
     if min_val <= 0 and transformation in ['log', 'sqrt']:
         series = series - min_val + 1
@@ -41,8 +41,9 @@ def apply_transformation(series, transformation='log'):
         return np.log(series)
     elif transformation == 'sqrt':
         return np.sqrt(series)
-    elif transformation == 'reciprocal':
-        return 1 / (series + 1e-10)
+    elif transformation == 'square':
+        # For left-skewed data, square transformation
+        return series ** 2
     elif transformation == 'boxcox':
         if (series > 0).all():
             transformed, _ = stats.boxcox(series)
@@ -98,23 +99,33 @@ def engineer_features(df, feature_cols, skewness_threshold=0.75):
                 else:
                     transformation = 'log'
             else:  # Left skewed
-                transformation = 'reciprocal'
+                transformation = 'square'
 
             # Apply transformation
             try:
                 transformed = apply_transformation(df[col].copy(), transformation)
-                # Normalize transformed feature
-                transformed_norm = StandardScaler().fit_transform(transformed.values.reshape(-1, 1)).flatten()
-
-                col_enhanced = f"{col}_enhance"
-                engineered_data[col_enhanced] = transformed_norm
-                feature_names.append(col_enhanced)
-
-                # Update skewness info
                 new_skew = check_skewness(transformed)
-                skewness_info[-1]['transformed'] = True
-                skewness_info[-1]['transformation'] = transformation
-                skewness_info[-1]['new_skewness'] = new_skew
+
+                # VALIDATION: Only use transformation if it reduces absolute skewness
+                if abs(new_skew) < abs(skew):
+                    # Normalize transformed feature
+                    transformed_norm = StandardScaler().fit_transform(transformed.values.reshape(-1, 1)).flatten()
+
+                    col_enhanced = f"{col}_enhance"
+                    engineered_data[col_enhanced] = transformed_norm
+                    feature_names.append(col_enhanced)
+
+                    # Update skewness info
+                    skewness_info[-1]['transformed'] = True
+                    skewness_info[-1]['transformation'] = transformation
+                    skewness_info[-1]['new_skewness'] = new_skew
+                    skewness_info[-1]['skewness_improved'] = True
+                else:
+                    # Transformation made skewness worse, skip it
+                    skewness_info[-1]['transformed'] = False
+                    skewness_info[-1]['transformation'] = transformation
+                    skewness_info[-1]['new_skewness'] = new_skew
+                    skewness_info[-1]['skewness_improved'] = False
             except:
                 pass
 
